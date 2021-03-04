@@ -4,13 +4,17 @@
 
 Currently: Dirty and CANNOT USE.
 
-Referencing: http://faculty.nps.edu/brutzman/vrtp/mil/navy/nps/disEnumerations/JdbeHtmlFiles/pdu/29.htm https://www.sisostds.org/DesktopModules/Bring2mind/DMX/API/Entries/Download?Command=Core_Download&EntryId=52359&PortalId=0&TabId=105
+Referencing: 
+
+http://faculty.nps.edu/brutzman/vrtp/mil/navy/nps/disEnumerations/JdbeHtmlFiles/pdu/29.htm
+
+https://www.sisostds.org/DesktopModules/Bring2mind/DMX/API/Entries/Download?Command=Core_Download&EntryId=52359&PortalId=0&TabId=105
 
 
 PDU Components:
 
-Item Name|Bit Length|Opt|Opt Ctl|Rpt|Rpt Ctl
--|-|-|-|-
+|Item Name|Bit Length|Opt|Opt Ctl|Rpt|Rpt Ctl|
+|-----| ----|----|----|----|----|
 PDU Header Record	|96
 Entity ID Record	|48				
 Force ID Field	|8
