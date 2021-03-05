@@ -1,5 +1,10 @@
 package model
 
+import (
+	"bytes"
+	"encoding/binary"
+)
+
 // PDUHeader
 //
 // A PDU Header Record shall be the first part of each PDU.
@@ -90,19 +95,24 @@ type PDUHeader struct {
 	PUDType         uint8
 	PDUStatus       uint8
 	PDUHeaderLength uint16
-	Timestamp       int64
+	Timestamp       uint64
+}
+type PDUPacket interface {
+	TrimHeader() []byte
+	TrimBody() []byte
 }
 
 type PDUBody struct {
-	EntityID                         uint
-	SequenceNumber                   uint
-	EntityType                       uint
-	EntityAppearance                 uint
-	EntityCapabilities               uint
-	EntityLocation                   uint
-	EntityOrientation                uint
-	EntityOrientationFixed           uint
-	EntityMarking                    uint
+	EntityIDRecord
+	SequenceNumber uint8
+	EntityType
+	EntityAppearance   uint
+	EntityCapabilities uint
+	EntityLocation
+	EntityOrientation
+	EntityOrientationFixed uint
+	EntityMarking          uint8
+	EntityMarkingStringRecord
 	EntityMarkingFixed               uint
 	EntityMarkingForceID             uint
 	EntityMarkingDRA                 uint
@@ -173,4 +183,69 @@ type PDUExtensionRecord struct {
 	RecordNumParts  uint
 	DRA10Flags      uint
 	AttachParts     uint
+}
+
+type EntityType struct {
+	KindField        uint8
+	DomainField      uint8
+	CountryField     uint16
+	CategoryField    uint8
+	SubcategoryField uint8
+	SpecificField    uint8
+	ExtraField       uint8
+}
+
+type EntityLocation struct {
+	XCoordinateField uint64
+	YCoordinateField uint64
+	ZCoordinateField uint64
+}
+
+type EntityOrientation struct {
+	PSIField   uint32
+	THETAField uint32
+	PHIField   uint32
+}
+
+type EntityMarkingStringRecord struct {
+	FirstCharacterField    uint8
+	SecondCharacterField   uint8
+	ThirdCharacterField    uint8
+	FourthCharacterField   uint8
+	FifthCharacterField    uint8
+	SixthCharacterField    uint8
+	SeventhCharacterField  uint8
+	EighthCharacterField   uint8
+	NinthCharacterField    uint8
+	TenthCharacterField    uint8
+	EleventhCharacterField uint8
+}
+
+func (header PDUHeader) TrimHeader() []byte {
+	byteHeader := new(bytes.Buffer)
+	_ = binary.Write(byteHeader, binary.LittleEndian, header)
+	return byteHeader.Bytes()
+}
+func (body PDUBody) TrimBody() []byte {
+	byteHeaderEntityIDRecord := new(bytes.Buffer)
+	_ = binary.Write(byteHeaderEntityIDRecord, binary.LittleEndian, body.EntityIDRecord)
+	PDUBodyEntityIDRecord := byteHeaderEntityIDRecord.Bytes()
+	byteHeaderEntityType := new(bytes.Buffer)
+	_ = binary.Write(byteHeaderEntityType, binary.LittleEndian, body.EntityType)
+	PDUBodyEntityType := byteHeaderEntityIDRecord.Bytes()
+	byteHeaderEntityOrientation := new(bytes.Buffer)
+	_ = binary.Write(byteHeaderEntityOrientation, binary.LittleEndian, body.EntityOrientation)
+	PDUBodyEntityOrientation := byteHeaderEntityIDRecord.Bytes()
+	byteHeaderEntityLocation := new(bytes.Buffer)
+	_ = binary.Write(byteHeaderEntityLocation, binary.LittleEndian, body.EntityLocation)
+	PDUBodyEntityLocation := byteHeaderEntityIDRecord.Bytes()
+	byteHeaderEntityMarkingStringRecord := new(bytes.Buffer)
+	_ = binary.Write(byteHeaderEntityMarkingStringRecord, binary.LittleEndian, body.EntityMarkingStringRecord)
+	PDUBodyEntityMarkingStringRecord := byteHeaderEntityIDRecord.Bytes()
+	return join(append(join(append(join(append(PDUBodyEntityIDRecord, body.SequenceNumber), PDUBodyEntityType), PDUBodyEntityLocation...), PDUBodyEntityOrientation), body.EntityMarking), PDUBodyEntityMarkingStringRecord)
+
+}
+
+func join(slice []byte, slices []byte) []byte {
+	return append(slice, slices...)
 }
