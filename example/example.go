@@ -13,7 +13,7 @@ func main() {
 		ProtocolVersion:      1,
 		CompatibilityVersion: 1,
 		ExerciseID:           1,
-		PUDType:              13,
+		PDUType:              13,
 		PDUStatus:            1,
 		PDUHeaderLength:      31,
 		Timestamp:            uint64(time.Now().Unix()),

@@ -92,7 +92,7 @@ type PDUHeader struct {
 	//  7	Resupply Received
 	//  8	Resupply Cancel
 	//  9	Repair Complete
-	PUDType         uint8
+	PDUType         uint8
 	PDUStatus       uint8
 	PDUHeaderLength uint16
 	Timestamp       uint64
