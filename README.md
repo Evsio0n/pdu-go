@@ -2,7 +2,7 @@
 
 ## Current standard: IEEE 1278.1
 
-Currently: Header and partly body can be work.
+Currently: Header and partial body can be work.
 
 Referencing: 
 
